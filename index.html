@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadwal Pelajaran XI DKV 2</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 1100px;
+            width: 100%;
+            margin-top: 20px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+            font-weight: 400;
+        }
+        
+        .info-box {
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            padding: 15px 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+        
+        .info-item {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .info-box p {
+            color: #555;
+            line-height: 1.6;
+            font-size: 14px;
+            font-weight: 400;
+            margin: 0;
+        }
+        
+        .btn-chat {
+            background: linear-gradient(90deg, #25d366 0%, #128c7e 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 5px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn-chat:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(37, 211, 102, 0.4);
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding-bottom: 5px;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            flex-shrink: 0;
+        }
+        
+        .tab:hover {
+            color: #667eea;
+        }
+        
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 13px;
+            min-width: 600px;
+            border: 1.5px solid #d1d5db;
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap;
+            border: 1.5px solid #d1d5db;
+        }
+        
+        td {
+            padding: 10px 8px;
+            border: 1.5px solid #d1d5db;
+            font-weight: 400;
+            color: #374151;
+        }
+        
+        tr:hover {
+            background: #f8f9ff;
+        }
+
+        .break-row {
+            background-color: #6b7280 !important;
+            color: white !important;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .break-row td {
+            color: white !important;
+            border-color: #4b5563;
+        }
+        
+        .day-header {
+            background: #764ba2 !important;
+            color: white;
+            font-size: 14px;
+            padding: 10px !important;
+            text-align: center !important;
+            font-weight: 600;
+            border: 1.5px solid #5b3a82;
+        }
+
+        .piket-section {
+            margin-bottom: 30px;
+        }
+        
+        .piket-section h4 {
+            color: #764ba2;
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 4px solid #764ba2;
+            font-size: 16px;
+        }
+
+        .footer-btns {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .download-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .secondary-btn {
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 10px rgba(71, 85, 105, 0.2);
+        }
+        
+        .secondary-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        /* Modal Base */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 35px;
+            border-radius: 24px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Feedback Form Styles */
+        .feedback-form label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1e293b;
+        }
+
+        .feedback-form textarea {
+            width: 100%;
+            height: 120px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            resize: none;
+            margin-bottom: 15px;
+        }
+
+        .feedback-form input[type="file"] {
+            margin-bottom: 20px;
+            font-size: 12px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-submit {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 600;
+            transition: 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-back {
+            background: #475569;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Timeline Styles for Log */
+        .log-container { 
+            max-height: 350px; 
+            overflow-y: auto; 
+            padding-right: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: #6366f1 #f1f1f1;
+        }
+        .log-container::-webkit-scrollbar { width: 6px; }
+        .log-container::-webkit-scrollbar-track { background: #f1f1f1; }
+        .log-container::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 10px; }
+
+        .log-entry { position: relative; padding-left: 25px; margin-bottom: 30px; border-left: 2px solid #e2e8f0; }
+        .log-entry::before { content: ''; position: absolute; left: -7px; top: 0; width: 12px; height: 12px; border-radius: 50%; background: #6366f1; border: 2px solid white; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); }
+        .log-version { font-weight: 700; color: #1e293b; font-size: 16px; display: block; margin-bottom: 8px; }
+        .log-list { list-style: none; font-size: 13px; color: #64748b; line-height: 1.8; }
+        .log-list li::before { content: "• "; color: #6366f1; font-weight: bold; margin-right: 5px; }
+
+        .empty-cell { color: #999; font-style: italic; }
+        .note-box { background: #fff9e6; border-left: 4px solid #ffc107; padding: 12px 15px; margin-top: 20px; border-radius: 8px; font-size: 13px; color: #666; }
+        .watermark { position: fixed; bottom: 20px; right: 20px; font-family: 'Great Vibes', cursive; font-size: 24px; color: rgba(255, 255, 255, 0.9); z-index: 1000; pointer-events: none; background: rgba(0,0,0,0.1); padding: 5px 15px; border-radius: 20px; backdrop-filter: blur(2px); }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { padding: 20px; }
+            h1 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Jadwal Pelajaran XI DKV 2</h1>
+        <p class="subtitle">Tahun Ajaran 2025/2026 - SMK TI Bali Global Denpasar</p>
+        
+        <div class="info-box">
+            <h3>Informasi Kelas</h3>
+            <p style="margin-bottom: 10px;"><strong>Ruang Kelas:</strong> Ruang 15</p>
+            <div class="info-item">
+                <p><strong>Wali Kelas:</strong> Drs. I Gusti Putu Tirta Yasa, M.Pd.</p>
+                <a href="https://wa.me/6281338401856" target="_blank" class="btn-chat">Chat Guru</a>
+            </div>
+            <div class="info-item">
+                <p><strong>Guru BK:</strong> Ni Putu Chintya Pradnya Suari, S.Pd.</p>
+                <a href="https://wa.me/6281905583802" target="_blank" class="btn-chat">Chat Guru</a>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('jadwal', event)">Jadwal Mingguan</button>
+            <button class="tab" onclick="showTab('guru', event)">Daftar Guru</button>
+            <button class="tab" onclick="showTab('pengganti', event)">Guru Pengganti</button>
+            <button class="tab" onclick="showTab('piket', event)">Guru Piket</button>
+        </div>
+        
+        <div id="jadwal" class="tab-content active">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 5%">No</th>
+                            <th style="width: 15%">Waktu</th>
+                            <th style="width: 10%">Kode</th>
+                            <th style="width: 35%">Mata Pelajaran</th>
+                            <th style="width: 10%">Kode</th>
+                            <th style="width: 25%">Guru Pengajar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="jadwalBody"></tbody>
+                </table>
+            </div>
+            <div class="note-box">
+                <strong>Catatan PJOK:</strong> 1 JP reguler + 1 JP Projek P5. Pengajar: I Wayan Agus Wiranata, S.Pd.
+            </div>
+        </div>
+        
+        <div id="guru" class="tab-content">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr><th>Kode</th><th>Nama Guru</th><th>Mata Pelajaran</th><th>Aksi</th></tr>
+                    </thead>
+                    <tbody id="guruTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="pengganti" class="tab-content">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr><th>Kode</th><th>Nama Guru Pengganti</th><th>Mata Pelajaran</th><th>Keterangan</th></tr>
+                    </thead>
+                    <tbody id="guruPenggantiBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="piket" class="tab-content">
+            <div class="piket-section">
+                <h4>☀️ Sesi Pagi</h4>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr><th>Hari</th><th>Nama Guru Piket</th><th>Aksi</th></tr>
+                        </thead>
+                        <tbody id="piketPagiBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="piket-section">
+                <h4>🌙 Sesi Sore</h4>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr><th>Hari</th><th>Nama Guru Piket</th><th>Aksi</th></tr>
+                        </thead>
+                        <tbody id="piketSoreBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-btns">
+            <button class="secondary-btn" onclick="toggleModal('logModal', true)">✨ Log Update</button>
+            <button class="download-btn" onclick="downloadExcel()">⬇️ Download Excel</button>
+            <button class="secondary-btn" onclick="toggleModal('feedbackModal', true)">💬 Feedback</button>
+        </div>
+    </div>
+
+    <div id="logModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 25px; font-size: 20px; border-bottom: 2px solid #f1f1f1; padding-bottom: 10px;">📜 Update Log</h2>
+            <div class="log-container">
+                <div class="log-entry">
+                    <span class="log-version">Version 1.1 <span style="font-size: 10px; background: #6366f1; color: white; padding: 2px 8px; border-radius: 10px; margin-left: 5px; vertical-align: middle;">LATEST</span></span>
+                    <ul class="log-list">
+                        <li>Integrasi sistem Guru Piket Sesi Pagi & Sore.</li>
+                        <li>Penambahan kotak Feedback interaktif untuk saran.</li>
+                        <li>Implementasi fitur riwayat pembaruan (Log Update).</li>
+                        <li>Perbaikan layout navigasi tombol footer.</li>
+                    </ul>
+                </div>
+                <div class="log-entry" style="opacity: 0.7;">
+                    <span class="log-version">Version 1.0</span>
+                    <ul class="log-list">
+                        <li>Rilis perdana sistem Jadwal Mapel XI DKV 2.</li>
+                        <li>Fitur tab jadwal mingguan dan daftar guru.</li>
+                        <li>Export jadwal ke format Microsoft Excel.</li>
+                    </ul>
+                </div>
+            </div>
+            <button class="btn-back" onclick="toggleModal('logModal', false)">Tutup</button>
+        </div>
+    </div>
+
+    <div id="feedbackModal" class="modal-overlay">
+        <div class="modal-content">
+            <div id="feedbackFormContent">
+                <h2 style="margin-bottom: 10px; font-size: 18px;">Kirim Masukan</h2>
+                <p style="font-size: 12px; color: #64748b; margin-bottom: 20px;">Jika ada saran atau keluhan silahkan tulis disini</p>
+                <form name="feedback" method="POST" data-netlify="true" enctype="multipart/form-data" class="feedback-form" onsubmit="handleSubmit(event)">
+                    <input type="hidden" name="form-name" value="feedback">
+                    <label>Saran Kamu:</label>
+                    <textarea name="message" required placeholder="Tulis pesanmu..."></textarea>
+                    
+                    <label>Lampiran (Foto/Video):</label>
+                    <input type="file" name="attachment" accept="image/*,video/*">
+                    
+                    <button type="submit" class="btn-submit">Kirim Feedback</button>
+                </form>
+            </div>
+            <div id="successMessage" style="display: none; text-align: center; padding: 20px 0;">
+                <div style="font-size: 40px; margin-bottom: 10px;">🎉</div>
+                <h3 style="margin-bottom: 10px;">Terkirim!</h3>
+                <p style="font-size: 14px; color: #64748b;">Terima kasih atas feedback nya untuk pengembangan sistem ini.</p>
+            </div>
+            <button class="btn-back" onclick="toggleModal('feedbackModal', false)">Kembali</button>
+        </div>
+    </div>
+
+    <div class="watermark">By Deva</div>
+
+    <script>
+        const jadwalData = {
+            'SENIN': [['1', '07.05 - 07.45', 'B.9.4', 'Animasi-FF', '062', 'Bella Cintya Devi, S.Kom.'],['2', '07.45 - 08.25', 'B.9.4', 'Animasi-FF', '062', 'Bella Cintya Devi, S.Kom.'],['3', '08.25 - 09.05', 'B.1', 'Matematika', '007', 'A.A Gede Putra Dwi Artajaya, S.Si., M.Kom.'],['4', '09.05 - 09.45', 'B.1', 'Matematika', '007', 'A.A Gede Putra Dwi Artajaya, S.Si., M.Kom.'],['-', '09.45 - 10.00', '-', 'ISTIRAHAT', '-', '-'],['5', '10.00 - 10.40', 'B.6.4', 'Desain Komunikasi Visual', '076', 'Triono Doni Wijaya, S.Kom.'],['6', '10.40 - 11.20', 'B.6.4', 'Desain Komunikasi Visual', '076', 'Triono Doni Wijaya, S.Kom.'],['7', '11.20 - 12.00', 'B.6.4', 'Desain Komunikasi Visual', '076', 'Triono Doni Wijaya, S.Kom.'],['8', '12.00 - 12.40', 'B.2', 'Bahasa Inggris', '070', 'Ni Putu Tirta Purnama Dewi, S.Pd']],
+            'SELASA': [['1', '07.05 - 07.45', 'B.7', 'Projek Kreatif dan Kewirausahaan', '018', 'Putu Yenny Suryantari, S.Pd.'],['2', '07.45 - 08.25', 'B.7', 'Projek Kreatif dan Kewirausahaan', '018', 'Putu Yenny Suryantari, S.Pd.'],['3', '08.25 - 09.05', 'A.5', 'Sejarah Indonesia', '081', 'Tjok Istri Agung Rai Sintha Devi, S.Pd.'],['4', '09.05 - 09.45', 'A.2', 'Pendidikan Pancasila', '067', 'Nengah Dwi Rahayu, SE.'],['-', '09.45 - 10.00', '-', 'ISTIRAHAT', '-', '-'],['5', '10.00 - 10.40', 'A.1', 'Pendidikan Agama dan Budi Pekerti', '092', 'I Dewa Ayu Setiyawati, S.Pd. (Hindu)'],['6', '10.40 - 11.20', 'A.1', 'Pendidikan Agama dan Budi Pekerti', '092', 'I Dewa Ayu Setiyawati, S.Pd. (Hindu)'],['7', '11.20 - 12.00', 'B.6.4', 'Desain Komunikasi Visual', '076', 'Triono Doni Wijaya, S.Kom.'],['8', '12.00 - 12.40', 'B.6.4', 'Desain Komunikasi Visual', '076', 'Triono Doni Wijaya, S.Kom.']],
+            'RABU': [['1', '07.05 - 07.45', 'B.2', 'Bahasa Inggris', '070', 'Ni Putu Tirta Purnama Dewi, S.Pd'],['2', '07.45 - 08.25', 'B.2', 'Bahasa Inggris', '070', 'Ni Putu Tirta Purnama Dewi, S.Pd'],['3', '08.25 - 09.05', 'A.3', 'Bahasa Indonesia', '080', 'Ida Bagus Angga Baskara, S.Pd.'],['4', '09.05 - 09.45', 'A.3', 'Bahasa Indonesia', '080', 'Ida Bagus Angga Baskara, S.Pd.'],['-', '09.45 - 10.00', '-', 'ISTIRAHAT', '-', '-'],['5', '10.00 - 10.40', 'B.6.4', 'Desain Komunikasi Visual', '076', 'Triono Doni Wijaya, S.Kom.'],['6', '10.40 - 11.20', 'B.6.4', 'Desain Komunikasi Visual', '076', 'Triono Doni Wijaya, S.Kom.'],['7', '11.20 - 12.00', 'B.6.4', 'Desain Komunikasi Visual', '076', 'Triono Doni Wijaya, S.Kom.'],['8', '12.00 - 12.40', 'B.6.4', 'Desain Komunikasi Visual', '076', 'Triono Doni Wijaya, S.Kom.']],
+            'KAMIS': [['1', '07.05 - 07.45', 'B.6.4', 'Desain Komunikasi Visual', '076', 'Triono Doni Wijaya, S.Kom.'],['2', '07.45 - 08.25', 'B.6.4', 'Desain Komunikasi Visual', '076', 'Triono Doni Wijaya, S.Kom.'],['3', '08.25 - 09.05', 'B.6.4', 'Desain Komunikasi Visual', '076', 'Triono Doni Wijaya, S.Kom.'],['4', '09.05 - 09.45', 'B.6.4', 'Desain Komunikasi Visual', '076', 'Triono Doni Wijaya, S.Kom.'],['-', '09.45 - 10.00', '-', 'ISTIRAHAT', '-', '-'],['5', '10.00 - 10.40', 'B.6.4', 'Desain Komunikasi Visual', '076', 'Triono Doni Wijaya, S.Kom.'],['6', '10.40 - 11.20', 'B.7', 'Projek Kreatif dan Kewirausahaan', '018', 'Putu Yenny Suryantari, S.Pd.'],['7', '11.20 - 12.00', 'B.7', 'Projek Kreatif dan Kewirausahaan', '018', 'Putu Yenny Suryantari, S.Pd.'],['8', '12.00 - 12.40', 'B.7', 'Projek Kreatif dan Kewirausahaan', '018', 'Putu Yenny Suryantari, S.Pd.']],
+            'JUMAT': [['1', '07.05 - 07.45', 'A.7', 'Muatan Lokal (Bahasa Bali)', '092', 'I Dewa Ayu Setiyawati, S.Pd.'],['2', '07.45 - 08.25', 'A.7', 'Muatan Lokal (Bahasa Bali)', '092', 'I Dewa Ayu Setiyawati, S.Pd.'],['3', '08.25 - 09.05', 'B.6.4', 'Desain Komunikasi Visual', '076', 'Triono Doni Wijaya, S.Kom.'],['4', '09.05 - 09.45', 'B.6.4', 'Desain Komunikasi Visual', '076', 'Triono Doni Wijaya, S.Kom.'],['-', '09.45 - 10.00', '-', 'ISTIRAHAT', '-', '-'],['5', '10.00 - 10.40', 'B.6.4', 'Desain Komunikasi Visual', '076', 'Triono Doni Wijaya, S.Kom.'],['6', '10.40 - 11.20', 'B.6.4', 'Desain Komunikasi Visual', '076', 'Triono Doni Wijaya, S.Kom.'],['7', '11.20 - 12.00', '-', 'Kosong', '-', '-'],['8', '12.00 - 12.40', '-', 'Kosong', '-', '-']],
+            'SABTU': [['1-8', '07.05 - 12.40', '-', 'Kokurikuler Mandiri', '-', '-']]
+        };
+
+        const guruData = [['040', 'Ainul Mubsiroh, S.Pd.I, M.Pd.', 'Pendidikan Agama Islam', ''],['046', 'Masri Kagatanaribe, M.Pd.', 'Pendidikan Agama Kristen', ''],['096', 'Aprianus Anjelius Foutnine, S.Fil', 'Pendidikan Agama Katolik', ''],['095', 'Adventina Puspita', 'Pendidikan Agama Konghochu', ''],['063', 'Darsusanto, S.Ag.', 'Pendidikan Agama Budha', ''],['092', 'I Dewa Ayu Setiyawati, S.Pd.', 'Pendidikan Agama Hindu & Bahasa Bali', ''],['067', 'Nengah Dwi Rahayu, SE.', 'Pendidikan Pancasila', '6281220692219'],['081', 'Tjok Istri Agung Rai Sintha Devi, S.Pd.', 'Sejarah Indonesia', '6289534767483'],['080', 'Ida Bagus Angga Baskara, S.Pd.', 'Bahasa Indonesia', ''],['007', 'A.A Gede Putra Dwi Artajaya, S.Si., M.Kom.', 'Matematika', '6282247033044'],['070', 'Ni Putu Tirta Purnama Dewi, S.Pd', 'Bahasa Inggris', ''],['076', 'Triono Doni Wijaya, S.Kom.', 'Desain Komunikasi Visual', '6287863112233'],['018', 'Putu Yenny Suryantari, S.Pd.', 'Projek Kreatif dan Kewirausahaan', '6281353285810'],['062', 'Bella Cintya Devi, S.Kom.', 'Animasi-FF', '6281999022333'],['013', 'I Wayan Agus Wiranata, S.Pd.', 'PJOK (1 JP + 1 JP P5)', '']];
+
+        const guruPenggantiData = [['079', 'Ni Putu Linda Agustini, S.Pd.', 'Matematika', 'Menggantikan Bp. A.A Gede Putra'],['088', 'Ni Ketut Supartini, SS.', 'Bahasa Inggris', 'Menggantikan Ibu Ni Putu Tirta'],['081', 'Tjok Istri Agung Rai Sintha Devi, S.Pd.', 'Pendidikan Pancasila', 'Menggantikan Ibu Nengah Dwi Rahayu']];
+
+        const piketPagi = [['Senin', 'Ida Ayu Dewi Paramita, S.Pd', '62895375837712'],['Selasa', 'I Putu Dedy Karsana, S.Pd', '6281933019479'],['Rabu', 'Tjok Istri Agung Rai Sintha Devi, S.Pd', '6289534767483'],['Kamis', 'Ida Ayu Indra Pratiwi, S.Sn', '6281239588346'],['Jumat', 'Dra. Ni Made Ayu Adnyani', '6281238437877']];
+
+        const piketSore = [['Senin', 'Ni Putu Linda Agustini, S.Pd', '6285738235218'],['Selasa', 'I Kadek Yogi Mayudana, S.Pd., M.Pd', '628563769773'],['Rabu', 'Ni Kadek Chandra Putri Irani, S.Pd., M.Pd', '6285953912558'],['Kamis', 'Ni Wayan Lina Valentine, S.Pd', '628970147321'],['Jumat', 'Kadek Arie Wira Kusuma, S.Kom', '6282247033484']];
+
+        function renderAll() {
+            const renderRows = (data, target) => {
+                document.getElementById(target).innerHTML = data.map(row => {
+                    return `<tr>${row.map((cell, idx) => {
+                        if(target.includes('piket') && idx === 2) return `<td><a href="https://wa.me/${cell}" target="_blank" class="btn-chat">Chat Guru</a></td>`;
+                        return `<td>${cell}</td>`;
+                    }).join('')}</tr>`;
+                }).join('');
+            };
+
+            const jTable = document.getElementById('jadwalBody');
+            let jHtml = '';
+            for (const [day, sch] of Object.entries(jadwalData)) {
+                jHtml += `<tr><td colspan="6" class="day-header">${day}</td></tr>`;
+                sch.forEach(r => {
+                    const isB = r[3] === 'ISTIRAHAT';
+                    jHtml += `<tr class="${isB?'break-row':''}">` + r.map((c, i) => `<td>${(c==='Kosong'||(c==='-'&&i>0))?`<span class="empty-cell">${c}</span>`:c}</td>`).join('') + `</tr>`;
+                });
+            }
+            jTable.innerHTML = jHtml;
+
+            document.getElementById('guruTableBody').innerHTML = guruData.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]?`<a href="https://wa.me/${r[3]}" target="_blank" class="btn-chat">Chat</a>`:'-'}</td></tr>`).join('');
+            renderRows(guruPenggantiData, 'guruPenggantiBody');
+            renderRows(piketPagi, 'piketPagiBody');
+            renderRows(piketSore, 'piketSoreBody');
+        }
+
+        function showTab(t, e) {
+            document.querySelectorAll('.tab-content, .tab').forEach(x => x.classList.remove('active'));
+            document.getElementById(t).classList.add('active');
+            e.currentTarget.classList.add('active');
+        }
+
+        function toggleModal(id, show) {
+            document.getElementById(id).style.display = show ? 'flex' : 'none';
+            if(id === 'feedbackModal' && !show) {
+                document.getElementById('feedbackFormContent').style.display = 'block';
+                document.getElementById('successMessage').style.display = 'none';
+            }
+        }
+
+        function handleSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const formData = new FormData(form);
+
+            fetch("/", {
+                method: "POST",
+                body: formData,
+            })
+            .then(() => {
+                document.getElementById('feedbackFormContent').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+                form.reset();
+            })
+            .catch((error) => alert("Gagal mengirim feedback: " + error));
+        }
+
+        function downloadExcel() {
+            const wb = XLSX.utils.book_new();
+            const data = [['JADWAL KELAS XI DKV 2'], []];
+            for (const [day, sch] of Object.entries(jadwalData)) {
+                data.push([day], ['No', 'Waktu', 'Kode', 'Mapel', 'Kode', 'Guru'], ...sch, []);
+            }
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(data), 'Jadwal');
+            XLSX.writeFile(wb, 'Jadwal_DKV2.xlsx');
+        }
+
+        renderAll();
+    </script>
+</body>
+</html>
